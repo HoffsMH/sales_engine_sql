@@ -31,4 +31,6 @@ class SalesEngineTest < MiniTest::Test
     assert_equal engine, engine.merchant_repository.se
   end
 
+  
+
 end
