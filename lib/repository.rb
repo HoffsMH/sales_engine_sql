@@ -4,63 +4,46 @@ require_relative 'modules/find_all_by'
 require 'bigdecimal'
 
 class Repository
-  attr_reader :se, :table, :quick_lookup_table
-
-  def initialize(sales_engine, csv_path)
+  attr_reader :se, :table, :quick_lookup_table, :db
+  
+  def initialize(sales_engine, records, db)
     @se = sales_engine
     @table = []
-    load_data(csv_path)
-    @quick_lookup_table = populate_quick_lookup_table(@table)
+    @db = db
+    load_data(records)
+    
   end
-
+  
   include FindBy
   include FindAllBy
-
-  def input_data(file_name)
-    FileIO.new(file_name).input_data
-  end
-
-  def map_data(child_class, file_name)
-    input_data(file_name).each do |object_data|
-      @table << child_class.new(object_data, self)
-    end
-    @table.shift #removes header info
-  end
-
-  def populate_quick_lookup_table(table)
-    output = Hash.new()
-    table[0].fields.each{ |field| output[field] = {} }
-
-    table.each do |record|
-      record.fields.each{|field| output[field][record.send(field)] ||= record }
-    end
-    output
-  end
-
+  
   def all
     @table
   end
-
+  
   def random
     @table.sample
   end
-
+  
   def find_by(symbol, hunt)
-    quick_lookup_table[symbol][hunt]
+    result = db.execute("select  * from #{self.table_name} where #{symbol.to_s} = #{hunt}")
+    result[0]
+    self.child_class.new(result[0], self)
   end
-
+  
   def find_all_by(symbol, hunt)
-    self.table.select do |thing|
-      thing.send(symbol) == hunt
+    result = db.execute("select  * from #{self.table_name} where #{symbol.to_s} = \'#{hunt.to_s}\'")
+    result.map do |record|
+      self.child_class.new(record, self)
     end
   end
-
+  
   def find_all_by_date(symbol, date)
     self.table.select do |thing|
       thing.send(symbol)[0..9] == good_date(date)
     end
   end
-
+  
   def good_date(date)
     if date.class == Date
       date.strftime("%Y-%m-%d")
@@ -68,13 +51,13 @@ class Repository
       Date.parse(date).strftime("%Y-%m-%d")
     end
   end
-
+  
   def repo_table(symbol_thing)
     @se.send(symbol_thing).table
   end
-
+  
   def inspect
     self.class
   end
-
+  
 end
