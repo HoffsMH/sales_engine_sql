@@ -4,8 +4,8 @@ require_relative 'customer'
 class CustomerRepository < Repository
   
   attr_accessor :table_name, :child_class
-
-  def load_data(data)
+  
+  def make_table
     @table_name = 'customers'
     @child_class = Customer
     
@@ -18,23 +18,7 @@ class CustomerRepository < Repository
       updated_at date
     );
     SQL
-    
-    args = {:headers => true,       
-            :header_converters => :symbol,
-            :converters => :all}
-            
-    CSV.parse(data, args) do |row|
-      
-      formatted_row =  row.fields
-      
-      formatted_row[-2] = formatted_row[-2].gsub(" UTC", "")
-      formatted_row[-1] = formatted_row[-1].gsub(" UTC", "")
-      
-
-      db.execute "insert into customers values (?,?,?,?,?)" , formatted_row
-    end
-    
+  end
+  
     
   end
-
-end
