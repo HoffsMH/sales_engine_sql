@@ -14,21 +14,17 @@ class Customer
   end
 
   def invoices
-    @customer_repository.se.invoice_repository.find_all_by_customer_id(id)
+    result = @customer_repository.db.execute("select * from invoices where customer_id = #{id}")
+    @customer_repository.se.invoice_repository.convert(result)
   end
 
   def transactions
-    customer_transactions = []
-    invoices.each do |invoice|
-      transaction_repository = @customer_repository.se.transaction_repository
-      transaction = transaction_repository.find_all_by_invoice_id(invoice.id)
-      customer_transactions << transaction
+    transactions = invoices.map do |invoice|
+      invoice.invoice_repository.find_all_by(:invoice_id, invoice.id)
     end
+    transactions
   end
 
-    def invoices
-      @customer_repository.se.invoice_repository.find_all_by_customer_id(id)
-    end
     def transactions
       customer_transactions =  []
       invoices.each do |invoice|

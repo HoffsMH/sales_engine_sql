@@ -25,7 +25,9 @@ class SalesEngine
 
   def startup
     db_startup
-    start_customer_repo
+    customer_repo_startup
+    invoice_repo_startup
+    transaction_repo_startup
   end
   def db_startup
     if File.file?('data.db') 
@@ -37,6 +39,18 @@ class SalesEngine
     customers ||= File.read(File.join @csv_path, 'customers.csv')
     @customer_repository = ""
     @customer_repository = CustomerRepository.new(self, customers, db)
+  end
+  
+  def invoice_repo_startup(invoices=nil)
+    invoices ||= File.read(File.join @csv_path, 'invoices.csv')
+    @invoice_repository = ""
+    @invoice_repository = InvoiceRepository.new(self, invoices, db)
+  end
+  
+  def transaction_repo_startup(transactions=nil)
+    transactions ||= File.read(File.join @csv_path, 'transactions.csv')
+    @transaction_repository = ""
+    @transaction_repository = TransactionRepository.new(self, transactions, db)
   end
 
 end

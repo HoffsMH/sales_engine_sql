@@ -3,9 +3,25 @@ require_relative 'invoice'
 
 class InvoiceRepository < Repository
 
-  def load_data(csv_path)
-    map_data(Invoice, File.join(csv_path, "invoices.csv"))
+  attr_accessor :table_name, :child_class
+  
+  def make_table
+    @table_name = 'invoices'
+    @child_class = Invoice
+    
+    rows = db.execute <<-SQL
+    create table #{@table_name} (
+      id       INTEGER PRIMARY KEY AUTOINCREMENT,
+      customer_id     INTEGER,
+      merchant_id    INTEGER,
+      status    VARCHAR(31),
+      created_at date,
+      updated_at date
+    );
+    SQL
   end
+  
+
 
   def create(invoice_info)
     customer_id = invoice_info[:customer].id
