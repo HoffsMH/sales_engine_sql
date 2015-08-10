@@ -17,6 +17,7 @@ class Repository
   
   include FindBy
   include FindAllBy
+  
   def convert(result)
     result.map do |record|
        self.child_class.new(record, self)
@@ -30,7 +31,7 @@ class Repository
   
   def random
       result =  db.execute("select * from #{self.table_name} order by random() limit 1")
-      convert(result)
+      convert(result)[0]
   end
   
   def find_by(symbol, hunt)
