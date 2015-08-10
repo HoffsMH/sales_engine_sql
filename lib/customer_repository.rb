@@ -14,8 +14,8 @@ class CustomerRepository < Repository
       id       INTEGER PRIMARY KEY AUTOINCREMENT,
       first_name     VARCHAR(31),
       last_name     VARCHAR(31),
-      created_at datetime,
-      updated_at datetime
+      created_at date,
+      updated_at date
     );
     SQL
     
@@ -24,7 +24,14 @@ class CustomerRepository < Repository
             :converters => :all}
             
     CSV.parse(data, args) do |row|
-      db.execute "insert into customers values ( ?, ?, ?, ?, ?)", row.fields 
+      
+      formatted_row =  row.fields
+      
+      formatted_row[-2] = formatted_row[-2].gsub(" UTC", "")
+      formatted_row[-1] = formatted_row[-1].gsub(" UTC", "")
+      
+
+      db.execute "insert into customers values (?,?,?,?,?)" , formatted_row
     end
     
     

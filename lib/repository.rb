@@ -18,15 +18,15 @@ class Repository
   include FindAllBy
   
   def all
-    @table
+    result = db.execute("select * from #{self.table_name}")
   end
   
   def random
-    @table.sample
+    db.execute("select * from #{self.table_name} order by random() limit 1")
   end
   
   def find_by(symbol, hunt)
-    result = db.execute("select  * from #{self.table_name} where #{symbol.to_s} = #{hunt}")
+    result = db.execute("select  * from #{self.table_name} where #{symbol.to_s} = \'#{hunt}\' LIMIT 1")
     result[0]
     self.child_class.new(result[0], self)
   end
