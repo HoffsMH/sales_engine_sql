@@ -45,12 +45,6 @@ class Repository
     convert(result)
   end
   
-  def find_all_by_date(symbol, date)
-    self.table.select do |thing|
-      thing.send(symbol)[0..9] == good_date(date)
-    end
-  end
-  
   def good_date(date)
     if date.class == Date
       date.strftime("%Y-%m-%d")

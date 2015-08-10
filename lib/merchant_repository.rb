@@ -3,8 +3,20 @@ require_relative 'merchant'
 
 class MerchantRepository < Repository
 
-  def load_data(csv_path)
-    map_data(Merchant, File.join(csv_path, "merchants.csv"))
+  attr_accessor :table_name, :child_class
+  
+  def make_table
+    @table_name = 'merchants'
+    @child_class = Merchant
+    
+    rows = db.execute <<-SQL
+    create table #{@table_name} (
+      id       INTEGER PRIMARY KEY AUTOINCREMENT,
+      name    VARCHAR(31),
+      created_at date,
+      updated_at date
+    );
+    SQL
   end
 
   def most_revenue(merchant_count)
