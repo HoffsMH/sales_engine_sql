@@ -4,8 +4,8 @@ require_relative 'customer'
 class CustomerRepository < Repository
   
   attr_accessor :table_name, :child_class
-
-  def load_data(data)
+  
+  def make_table
     @table_name = 'customers'
     @child_class = Customer
     
@@ -14,20 +14,11 @@ class CustomerRepository < Repository
       id       INTEGER PRIMARY KEY AUTOINCREMENT,
       first_name     VARCHAR(31),
       last_name     VARCHAR(31),
-      created_at datetime,
-      updated_at datetime
+      created_at date,
+      updated_at date
     );
     SQL
-    
-    args = {:headers => true,       
-            :header_converters => :symbol,
-            :converters => :all}
-            
-    CSV.parse(data, args) do |row|
-      db.execute "insert into customers values ( ?, ?, ?, ?, ?)", row.fields 
-    end
-    
+  end
+  
     
   end
-
-end
