@@ -41,7 +41,7 @@ end
   
   def test_we_can_find_a_specific_customer
     engine = se_with_customers
-    customer = engine.customer_repository.find_by(:id, 3)
+    customer = engine.customer_repository.find_by_id(3)
     assert_equal 'Mariah', customer.first_name
   end
   

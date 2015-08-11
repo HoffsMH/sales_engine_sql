@@ -1,7 +1,7 @@
 require_relative 'test_helper'
 
 
-class RepositoryTest < MiniTest::Test
+class MerchantRepositoryTest < MiniTest::Test
   def se_with_merchants(merchants)
     engine = SalesEngine.new
     engine.db_startup
@@ -18,7 +18,7 @@ class RepositoryTest < MiniTest::Test
     7,Bernhard-Johns,2012-03-27 14:53:59 UTC,2012-03-27 14:53:59 UTC"
     
     engine = se_with_merchants(merchants_string)
-    merchant = engine.merchant_repository.find_by(:id, 3)
+    merchant = engine.merchant_repository.find_by_name("Willms and Sons")
 
     
     assert_equal 3, merchant.id

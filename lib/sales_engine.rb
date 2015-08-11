@@ -30,6 +30,7 @@ class SalesEngine
     transaction_repo_startup
     merchant_repo_startup
     item_repo_startup
+    invoice_item_repo_startup
   end
   def db_startup
     if File.file?('data.db') 
@@ -63,6 +64,11 @@ class SalesEngine
     items ||= File.read(File.join @csv_path, 'items.csv')
     @item_repository = ""
     @item_repository = ItemRepository.new(self, items, db)
+  end
+  def invoice_item_repo_startup(invoice_items=nil)
+    invoice_items ||= File.read(File.join @csv_path, 'invoice_items.csv')
+    @invoice_item_repository = ""
+    @invoice_item_repository = InvoiceItemRepository.new(self, invoice_items, db)
   end
 
 end

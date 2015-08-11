@@ -3,9 +3,25 @@ require_relative 'invoice_item'
 
 class InvoiceItemRepository < Repository
 
-  def load_data(csv_path)
-    map_data(InvoiceItem, File.join(csv_path, "invoice_items.csv"))
+  attr_accessor :table_name, :child_class
+  
+  def make_table
+    @table_name = 'invoice_items'
+    @child_class = InvoiceItem
+    
+    rows = db.execute <<-SQL
+    create table #{@table_name} (
+      id       INTEGER PRIMARY KEY AUTOINCREMENT,
+      item_id     INTEGER,
+      invoice_id    INTEGER,
+      quantity    INTEGER,
+      unit_price    INTEGER,
+      created_at date,
+      updated_at date
+    );
+    SQL
   end
+
 
   def item_data_by_invoice(method_name)
     output_hash = {}

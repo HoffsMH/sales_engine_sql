@@ -49,6 +49,7 @@ class RepositoryTest < MiniTest::Test
     assert test_engine.transaction_repository
     assert test_engine.merchant_repository
     assert test_engine.item_repository
+    assert test_engine.invoice_item_repository
     
   end
 end
