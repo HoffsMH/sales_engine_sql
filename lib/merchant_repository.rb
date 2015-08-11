@@ -32,7 +32,31 @@ class MerchantRepository < Repository
   end
 
   def most_items(merchant_count)
-    top_merchants(merchant_count, ranked_merchants(quantity_sold_list))
+    merchants = Hash.new(0)
+    merchant_quantities = db.execute("select 
+                                      invoices.merchant_id, 
+                                      invoice_items.quantity  
+                                    from invoice_items 
+                                    left join invoices on 
+                                      invoice_items.invoice_id = invoices.id 
+                                    left join transactions on 
+                                      transactions.invoice_id =  invoices.id 
+                                    where 
+                                      transactions.result = 'success'")
+    merchant_quantities.map do |merchant_quantity|
+      merchant_id = merchant_quantity[0]
+      quantity =  merchant_quantity[1]
+      merchants[merchant_id] += quantity
+    end
+    
+    sorted_merchants = merchants.sort_by do |merchant|
+      merchant[1]
+    end.reverse
+    sorted_merchants[0..merchant_count-1].map do |merchant|
+      find_by_id(merchant[0])
+    end
+    
+      
   end
 
   def revenue(date)
