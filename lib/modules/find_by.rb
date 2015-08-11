@@ -24,7 +24,8 @@ module FindBy
     find_by(:status, status)
   end
   def find_by_unit_price(unit_price)
-    unit_price = BigDecimal.new(unit_price) * 100.0
+    unit_price = unit_price.to_f * 100
+    unit_price = unit_price.to_i
     find_by(:unit_price, unit_price)
   end
   def find_by_credit_card_number(credit_card_number)

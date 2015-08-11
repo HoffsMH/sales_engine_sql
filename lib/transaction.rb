@@ -21,9 +21,7 @@ class Transaction
   def invoice
     transaction_repository.se.invoice_repository.find_by(:id, invoice_id)
   end
-
   def successful?
     result == "success"
   end
-
 end

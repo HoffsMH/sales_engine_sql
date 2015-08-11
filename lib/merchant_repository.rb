@@ -20,7 +20,15 @@ class MerchantRepository < Repository
   end
 
   def most_revenue(merchant_count)
-    top_merchants(merchant_count, ranked_merchants(revenue_list))
+    revenues = all.map do |merchant|
+      [merchant.id, merchant.revenue]
+    end
+    sorted_revenues = revenues.sort_by do |pair|
+      pair[1]
+    end.reverse
+    sorted_revenues[0..merchant_count-1].map do |pair|
+      find_by_id(pair[0])
+    end
   end
 
   def most_items(merchant_count)
