@@ -29,6 +29,7 @@ class SalesEngine
     invoice_repo_startup
     transaction_repo_startup
     merchant_repo_startup
+    item_repo_startup
   end
   def db_startup
     if File.file?('data.db') 
@@ -56,7 +57,12 @@ class SalesEngine
   def merchant_repo_startup(merchants=nil)
     merchants ||= File.read(File.join @csv_path, 'merchants.csv')
     @merchant_repository = ""
-    @merchants_repository = MerchantRepository.new(self, merchants, db)
+    @merchant_repository = MerchantRepository.new(self, merchants, db)
+  end
+  def item_repo_startup(items=nil)
+    items ||= File.read(File.join @csv_path, 'items.csv')
+    @item_repository = ""
+    @item_repository = ItemRepository.new(self, items, db)
   end
 
 end

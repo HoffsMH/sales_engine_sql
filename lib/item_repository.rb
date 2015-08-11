@@ -3,9 +3,26 @@ require_relative 'item'
 
 class ItemRepository < Repository
 
-  def load_data(csv_path)
-    map_data(Item, File.join(csv_path, "items.csv"))
+  attr_accessor :table_name, :child_class
+  
+  def make_table
+    @table_name = 'items'
+    @child_class = Item
+    
+    rows = db.execute <<-SQL
+    create table #{@table_name} (
+      id       INTEGER PRIMARY KEY AUTOINCREMENT,
+      name    VARCHAR(31),
+      description   VARCHAR(31),
+      unit_price    INTEGER,
+      merchant_id    INTEGER,
+      created_at date,
+      updated_at date
+    );
+    SQL
   end
+  
+  # id,name,description,unit_price,merchant_id,created_at,updated_at
 
   def most_revenue(item_count)
 

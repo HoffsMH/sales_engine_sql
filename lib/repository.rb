@@ -1,7 +1,7 @@
-require_relative 'file_io'
 require_relative 'modules/find_by'
 require_relative 'modules/find_all_by'
 require 'bigdecimal'
+require 'csv'
 
 class Repository
   attr_reader :se, :table, :quick_lookup_table, :db
