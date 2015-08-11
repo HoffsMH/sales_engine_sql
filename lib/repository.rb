@@ -1,7 +1,7 @@
-require_relative 'file_io'
 require_relative 'modules/find_by'
 require_relative 'modules/find_all_by'
 require 'bigdecimal'
+require 'csv'
 
 class Repository
   attr_reader :se, :table, :quick_lookup_table, :db
@@ -43,12 +43,6 @@ class Repository
   def find_all_by(symbol, hunt)
     result = db.execute("select  * from #{self.table_name} where #{symbol.to_s} = \'#{hunt.to_s}\'")
     convert(result)
-  end
-  
-  def find_all_by_date(symbol, date)
-    self.table.select do |thing|
-      thing.send(symbol)[0..9] == good_date(date)
-    end
   end
   
   def good_date(date)
