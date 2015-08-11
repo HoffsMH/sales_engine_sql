@@ -11,18 +11,18 @@ require 'pry'
 
 class SalesEngine
   attr_reader :customer_repository, :invoice_repository,
-              :transaction_repository, :invoice_item_repository,
-               :merchant_repository, :item_repository, :csv_path, :db
-
+  :transaction_repository, :invoice_item_repository,
+  :merchant_repository, :item_repository, :csv_path, :db
+  
   def initialize(csv_path = our_folder)
     @csv_path = csv_path
   end
-
+  
   def our_folder
     our_root = File.expand_path('../..',  __FILE__)
     File.join our_root, "data"
   end
-
+  
   def startup
     db_startup
     customer_repo_startup
@@ -36,7 +36,7 @@ class SalesEngine
     if File.file?('data.db') 
       File.delete('data.db')
     end
-    @db = SQLite3::Database.new 'data.db'     
+      @db = SQLite3::Database.new 'data.db'     
   end
   def customer_repo_startup(customers=nil)
     customers ||= File.read(File.join @csv_path, 'customers.csv')
@@ -63,14 +63,14 @@ class SalesEngine
   def item_repo_startup(items=nil)
     items ||= File.read(File.join @csv_path, 'items.csv')
     @item_repository = ""
-    @item_repository = ItemRepository.new(self, items, db)
+    @item_repository = ItemRepository.new(self, items,  db)
   end
   def invoice_item_repo_startup(invoice_items=nil)
     invoice_items ||= File.read(File.join @csv_path, 'invoice_items.csv')
     @invoice_item_repository = ""
     @invoice_item_repository = InvoiceItemRepository.new(self, invoice_items, db)
   end
-
+  
 end
 
 engine = SalesEngine.new()

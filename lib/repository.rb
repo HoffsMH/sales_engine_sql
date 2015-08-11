@@ -8,7 +8,6 @@ class Repository
   
   def initialize(sales_engine, records, db)
     @se = sales_engine
-    @table = []
     @db = db
     make_table
     fill_table(records)
@@ -36,7 +35,7 @@ class Repository
   
   def find_by(symbol, hunt)
     result = db.execute("select  * from #{self.table_name} where #{symbol.to_s} = \'#{hunt}\' LIMIT 1")
-    if result[0]
+    if !result.first.nil?
       self.child_class.new(result[0], self)
     else
       nil

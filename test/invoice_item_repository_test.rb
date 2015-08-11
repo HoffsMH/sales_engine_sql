@@ -64,5 +64,13 @@ class InvoiceItemRepositoryTest < MiniTest::Test
     
     assert_equal 2, invoices.size
   end
+  def test_we_can_make_new_invoice_items
+    engine = mock_se_with_fixture_data
+    items = (1..3).map {engine.item_repository.random}
+    invoice_id = 989
+    
+    engine.invoice_item_repository.add_invoice_items(items, invoice_id)
+    
+  end
   
 end

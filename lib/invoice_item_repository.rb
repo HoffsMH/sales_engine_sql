@@ -1,3 +1,4 @@
+require 'pry'
 require_relative 'repository'
 require_relative 'invoice_item'
 
@@ -63,10 +64,21 @@ class InvoiceItemRepository < Repository
       created_at = Time.now.utc.to_s
       updated_at = created_at
 
-      new_record = [new_id, item_id, invoice_id, quantity, unit_price,
-                    created_at, updated_at]
-      table.push(InvoiceItem.new(new_record, self))
-      @quick_lookup_table = populate_quick_lookup_table(table)
+      new_invoice_item = se.db.execute("insert into invoice_items 
+                          (item_id,
+                           invoice_id,
+                           quantity,
+                           unit_price,
+                           created_at,
+                           updated_at)
+                         values
+                            (#{item_id},
+                              #{invoice_id},
+                             '#{quantity}',
+                             '#{unit_price}',
+                             '#{created_at}',
+                             '#{updated_at}')")
+      new_id = se.db.execute("select id from invoice_items order by id desc limit 1").flatten.first 
     end
   end
 

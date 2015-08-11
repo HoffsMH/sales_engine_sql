@@ -29,7 +29,7 @@ class InvoiceRepositoryTest < MiniTest::Test
     
     engine = se_with_invoices(invoice_string)
     invoice = engine.invoice_repository.find_by_status('shipped')
-
+    
     
     assert_equal 1, invoice.id
   end
@@ -47,7 +47,7 @@ class InvoiceRepositoryTest < MiniTest::Test
     
     engine = se_with_invoices(invoice_string)
     invoice = engine.invoice_repository.find_by_customer_id(2)
-
+    
     
     assert_equal 9, invoice.id
   end
@@ -65,7 +65,7 @@ class InvoiceRepositoryTest < MiniTest::Test
     
     engine = se_with_invoices(invoice_string)
     invoice = engine.invoice_repository.find_by_status('cool')
-
+    
     
     assert invoice.nil?
   end
@@ -102,4 +102,13 @@ class InvoiceRepositoryTest < MiniTest::Test
     
     
   end
-end
+  def test_we_can_make_a_new_invoice
+    
+    engine = mock_se_with_fixture_data
+    customer = engine.customer_repository.find_by(:id, 3)
+    merchant = engine.merchant_repository.find_by(:id, 4)
+    invoice = engine.invoice_repository.create(customer: customer, merchant: merchant, items: items)
+    
+    assert_equal 30, invoice.id
+    end
+  end
