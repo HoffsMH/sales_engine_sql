@@ -33,10 +33,8 @@ class InvoiceItem
   end
 
   def merchant
-    item_repository = invoice_item_repository.se.item_repository
-    merchant = item_repository.find_by(:id, item_id).merchant
-
-    merchant
+    merchant_id = invoice.merchant_id
+    invoice_item_repository.se.merchant_repository.find_by(:id, merchant_id)
   end
 
   def successful?

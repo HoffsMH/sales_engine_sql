@@ -20,7 +20,7 @@ class SalesEngine
   
   def our_folder
     our_root = File.expand_path('../..',  __FILE__)
-    File.join our_root, "data"
+    File.join our_root, "fixtures"
   end
   
   def startup

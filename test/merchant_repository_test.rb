@@ -62,6 +62,20 @@ class MerchantRepositoryTest < MiniTest::Test
 
     assert_equal 2, pending_merchants.size
   end
+  def test_most_items_it_can_return_the_right_amount_of_merchants
+    
+    engine = mock_se_with_fixture_data
+    merchants = engine.merchant_repository.most_items(2)
+    assert_kindof Merchant, merchants[0]
+    assert_equal 2, merchants.size
+  end
+  def test_most_items_it_can_return_the_right_amount_of_merchants
+    
+    engine = mock_se_with_fixture_data
+    merchants = engine.merchant_repository.most_items(1)
+
+    assert_equal "hi", merchants[0].name
+  end
   
   def test_a_merchant_can_find_its_items
     

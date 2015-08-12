@@ -1,3 +1,4 @@
+require 'pry'
 require_relative 'test_helper'
 
 
@@ -67,23 +68,54 @@ class InvoiceItemRepositoryTest < MiniTest::Test
   def test_we_can_make_new_invoice_items
     engine = mock_se_with_fixture_data
     items = (1..3).map {engine.item_repository.random}
-    invoice_id = 9899999
-    
-    engine.invoice_item_repository.add_invoice_items(items, invoice_id)
-    
+    invoice_id = 9899999     
+    engine.invoice_item_repository.add_invoice_items(items, invoice_id)     
     assert_equal 3 ,engine.invoice_item_repository.find_all_by(:invoice_id, 9899999).size
-    
-    
   end
   def test_new_items_are_returned
     engine = mock_se_with_fixture_data
     items = (1..3).map {engine.item_repository.random}
-    invoice_id = 9899999
+    invoice_id = 9899999     
+    result = engine.invoice_item_repository.add_invoice_items(items, invoice_id)     
+    assert_equal 9899999, result[0].invoice_id     
+  end
+  
+  def test_an_invoice_item_knows_its_corresponding_invoice
+    engine = mock_se_with_fixture_data
+    invoice = engine.invoice_item_repository.find_by(:id, 4).invoice
+    assert invoice
+    assert_equal 45, invoice.id
+  end
+  def test_an_invoice_item_knows_its_corresponding_item
+    engine = mock_se_with_fixture_data
+    item = engine.invoice_item_repository.find_by(:id, 4).item
+    assert item
+    assert_equal 45, item.id
+  end
+  
+  def test_simple_revenue_returns_only_simple_revenue
+    engine = mock_se_with_fixture_data
+    simple_revenue = engine.invoice_item_repository.find_by(:id, 4).simple_revenue
     
-    result = engine.invoice_item_repository.add_invoice_items(items, invoice_id)
+    assert_equal 345, simple_revenue
+  end
+  
+  def test_invoice_item_returns_a_merchant
+    engine = mock_se_with_fixture_data
+    merchant = engine.invoice_item_repository.find_by(:id, 4).merchant
     
-    assert_equal 9899999, result[0].invoice_id
+    assert !merchant.nil?
+    assert_kind_of Merchant, merchant
+  end
+  def test_merchant_returns_the_right_merchant
+    engine = mock_se_with_fixture_data
     
+    merchant = engine.invoice_item_repository.find_by(:id, 4).merchant
+    merchatn = engine.invoice_item_repository.find_by(:id, 4)
+    
+    assert !merchant.nil?
+    assert_kind_of Merchant, merchant
+    assert_equal 34, merchant.id
   end
   
 end

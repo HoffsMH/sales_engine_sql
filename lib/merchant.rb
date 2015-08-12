@@ -33,7 +33,7 @@ class Merchant
         quantity = price_and_quantity[1]
         sum + (price * quantity)
       end
-      total * 0.01
+      BigDecimal.new(total) * 0.01
     end
     def prices_and_quantities
       merchant_repository.db.execute("select 
@@ -66,11 +66,12 @@ class Merchant
               
               
       price_quantities = merchant_repository.se.db.execute(query)
-      price_quantities.reduce(0) do |sum , price_quantity|
+      total = price_quantities.reduce(0) do |sum , price_quantity|
         price = price_quantity.first
         quantity = price_quantity.last
         sum + (price * quantity)
       end
+      BigDecimal.new(total) * 0.01
     end
     
     def favorite_customer

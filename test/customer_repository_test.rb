@@ -87,7 +87,7 @@ class CustomerRepositoryTest < MiniTest::Test
     
     engine = mock_se_with_fixture_data
     invoices = engine.customer_repository.find_by(:id,6).invoices
-    
+    assert invoices[0]
     assert_equal 34, invoices[0].id
   end
   def test_a_customer_can_bring_up_transactions
@@ -101,7 +101,7 @@ class CustomerRepositoryTest < MiniTest::Test
     
     engine = mock_se_with_fixture_data
     transactions = engine.customer_repository.find_by(:id,6).transactions
-    
+    assert transactions[0]
     assert_equal 34, transactions[0].id
   end
   
