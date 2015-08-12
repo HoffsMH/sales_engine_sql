@@ -20,15 +20,18 @@ class MerchantRepository < Repository
   end
 
   def most_revenue(merchant_count)
-    revenues = all.map do |merchant|
-      [merchant.id, merchant.revenue]
-    end
-    sorted_revenues = revenues.sort_by do |pair|
-      pair[1]
-    end.reverse
-    sorted_revenues[0..merchant_count-1].map do |pair|
-      find_by_id(pair[0])
-    end
+    price_quantities =  se.db.execute("select 
+                          invoice_items.unit_price, 
+                          invoice_items.quantity, 
+                          invoices.merchant_id 
+                      from invoice_items 
+                      join invoices on 
+                          invoice_items.invoice_id = invoices.id 
+                      join transactions on 
+                          transactions.invoice_id = invoices.id 
+                      where 
+                          transactions.result = 'success'")
+    price_quantities
   end
 
   def most_items(merchant_count)
@@ -60,14 +63,26 @@ class MerchantRepository < Repository
   end
 
   def revenue(date)
-    date = good_date(date)
-    total = 0
-
-    revenue_by_invoice.each do |invoice_id, revenue|
-      invoice = se.invoice_repository.find_by(:id, invoice_id)
-      if invoice.successful? && good_date(invoice.created_at) == date
-          total += revenue
-      end
+    date_str = good_date(date)
+    prices_quantities = se.db.execute("select 
+                                          invoice_items.unit_price, 
+                                          invoice_items.quantity
+                                      from 
+                                          invoice_items 
+                                      join invoices 
+                                      on 
+                                          invoice_items.invoice_id = invoices.id
+                                      join transactions 
+                                      on 
+                                          transactions.invoice_id = invoices.id 
+                                      where 
+                                          date(invoices.created_at) = '#{date_str}'
+                                      and
+                                          transactions.result = 'success'")
+    total = prices_quantities.reduce(0) do |sum, price_q|
+      price = price_q.first
+      quantity = price_q.last
+      sum + (price * quantity)
     end
     total * 0.01
   end

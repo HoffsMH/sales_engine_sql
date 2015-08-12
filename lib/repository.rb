@@ -58,7 +58,7 @@ class Repository
     args = {:headers => true,
       :header_converters => :symbol,
       :converters => :all}
-      
+      db.transaction
       CSV.parse(data, args) do |row|
         formatted_row =  row.fields
         
@@ -69,6 +69,7 @@ class Repository
         
         db.execute "insert into #{self.table_name} values (#{value_string.join(",")})" , formatted_row
       end
+      db.commit
     end
     
     def inspect

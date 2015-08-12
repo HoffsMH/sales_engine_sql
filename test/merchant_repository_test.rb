@@ -38,4 +38,22 @@ class MerchantRepositoryTest < MiniTest::Test
     assert_equal 2, merchants.size
   end
   
+  def test_it_can_return_total_revenue
+    date = Date.parse "2012-03-25"
+    
+    engine = mock_se_with_fixture_data
+    revenue = engine.merchant_repository.revenue(date)
+    
+    assert_equal 21067.77, revenue
+  end
+  def test_it_can_return_top_merchants
+    
+    engine = mock_se_with_fixture_data
+    top_merchants = engine.merchant_repository.most_revenue(3)
+
+    assert_equal 3, top_merchants.size
+    assert_equal "someName", top_merchants.first.name
+
+  end
+  
 end

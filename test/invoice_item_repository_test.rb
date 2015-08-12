@@ -82,7 +82,7 @@ class InvoiceItemRepositoryTest < MiniTest::Test
     
     result = engine.invoice_item_repository.add_invoice_items(items, invoice_id)
     
-    assert_equal 4, result.size
+    assert_equal 9899999, result[0].invoice_id
     
   end
   

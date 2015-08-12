@@ -36,7 +36,7 @@ class SalesEngine
     if File.file?('data.db') 
       File.delete('data.db')
     end
-      @db = SQLite3::Database.new 'data.db'     
+    @db = SQLite3::Database.new 'data.db'     
   end
   def customer_repo_startup(customers=nil)
     customers ||= File.read(File.join @csv_path, 'customers.csv')
