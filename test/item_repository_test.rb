@@ -117,4 +117,17 @@ class ItemTest < MiniTest::Test
     9,Item Quo Magnam,Culpa deleniti adipisci voluptates aut. Sed eum quisquam nisi. Voluptatem est rerum est qui id reprehenderit. Molestiae laudantium non velit alias. Ipsa consequatur modi quibusdam.,22582,1,2012-03-27 14:53:59 UTC,2012-03-27 14:53:59 UTC"
     
   end
+  
+  def test_repository_most_revenue_returns_the_right_amount_of_items
+    engine = mock_se_with_fixture_data
+    items = engine.item_repository.most_revenue(3)
+  
+    assert_equal 3, items.size
+  end
+  def test_repository_most_revenue_returns_the_right_item
+    engine = mock_se_with_fixture_data
+    items = engine.item_repository.most_revenue(1)
+  
+    assert_equal 3, items[1]
+  end
 end

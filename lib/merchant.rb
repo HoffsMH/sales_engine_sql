@@ -52,17 +52,25 @@ class Merchant
       invoices.merchant_id = #{id}")
     end
     def revenue_with_date(date)
-      # db.execute("select invoice_items.unit_price, invoice_items.quantity from invoice_items left join transactions on invoice_items.invoice_id = transactions.invoice_id left join invoices on invoices.id = invoice_items.invoice_id where transactions.result = 'success' and invoices.merchant_id = 26 and date(invoices.created_at) = #{merchant_repository.good_date(date)}")
-      total = prices_and_quantities.reduce(0) do |sum, price_and_quantity|
-        if merchant_repository.good_date(price_and_quantity[2]) ==  merchant_repository.good_date(date)
-          price = price_and_quantity[0]
-          quantity = price_and_quantity[1]
-          sum + (price * quantity)
-        else
-          sum + 0
-        end
+      query = "select 
+                invoice_items.unit_price,
+                invoice_items.quantity
+              from invoice_items 
+              left join invoices 
+                on invoice_items.invoice_id = invoices.id 
+              left join transactions 
+                on transactions.invoice_id = invoices.id 
+              where transactions.result = 'success' 
+              and invoices.merchant_id = #{id} 
+              and date(invoices.created_at) = '#{merchant_repository.good_date(date)}'"
+              
+              
+      price_quantities = merchant_repository.se.db.execute(query)
+      price_quantities.reduce(0) do |sum , price_quantity|
+        price = price_quantity.first
+        quantity = price_quantity.last
+        sum + (price * quantity)
       end
-      BigDecimal.new(total) * 0.01
     end
     
     def favorite_customer

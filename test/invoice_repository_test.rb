@@ -110,6 +110,17 @@ class InvoiceRepositoryTest < MiniTest::Test
     items = (1..3).map {engine.item_repository.random}
     invoice = engine.invoice_repository.create(customer: customer, merchant: merchant, items: items)
     
-    assert_equal 30, invoice.id
-    end
+    assert_equal 31, invoice.id
   end
+  
+  def test_we_can_use_an_invoice_to_charge_a_transaction
+    
+    engine = mock_se_with_fixture_data
+    info = {credit_card_number: '1111222233334444',  credit_card_expiration_date: "10/14", result: "success"}
+
+    transaction = engine.invoice_repository.find_by(:id, 3).charge(info)
+    expiration_date =  engine.transaction_repository.find_by(:credit_card_number, '1111222233334444').credit_card_expiration_date
+    
+    assert_equal "10/14", expiration_date
+  end
+end

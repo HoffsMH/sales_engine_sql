@@ -76,4 +76,33 @@ class CustomerRepositoryTest < MiniTest::Test
     
     assert_equal 8, customer.id
   end
+  def test_a_customer_can_bring_up_invoices
+    
+    engine = mock_se_with_fixture_data
+    invoices = engine.customer_repository.find_by(:id,6).invoices
+    
+    assert_equal 34, invoices.size
+  end
+  def test_a_customer_can_bring_up_the_right_invoices
+    
+    engine = mock_se_with_fixture_data
+    invoices = engine.customer_repository.find_by(:id,6).invoices
+    
+    assert_equal 34, invoices[0].id
+  end
+  def test_a_customer_can_bring_up_transactions
+    
+    engine = mock_se_with_fixture_data
+    transactions = engine.customer_repository.find_by(:id,6).transactions
+    
+    assert_equal 34, transactions
+  end
+  def test_a_customer_can_bring_up_the_right_transaction
+    
+    engine = mock_se_with_fixture_data
+    transactions = engine.customer_repository.find_by(:id,6).transactions
+    
+    assert_equal 34, transactions[0].id
+  end
+  
 end

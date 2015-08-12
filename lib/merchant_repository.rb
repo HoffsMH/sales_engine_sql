@@ -20,18 +20,34 @@ class MerchantRepository < Repository
   end
 
   def most_revenue(merchant_count)
-    price_quantities =  se.db.execute("select 
-                          invoice_items.unit_price, 
-                          invoice_items.quantity, 
-                          invoices.merchant_id 
-                      from invoice_items 
-                      join invoices on 
-                          invoice_items.invoice_id = invoices.id 
-                      join transactions on 
-                          transactions.invoice_id = invoices.id 
-                      where 
+    merchants_revenue = Hash.new(0)
+    price_quantities =  se.db.execute("select
+                          invoice_items.unit_price,
+                          invoice_items.quantity,
+                          invoices.merchant_id
+                      from invoice_items
+                      join invoices on
+                          invoice_items.invoice_id = invoices.id
+                      join transactions on
+                          transactions.invoice_id = invoices.id
+                      where
                           transactions.result = 'success'")
-    price_quantities
+    price_quantities.each do |price_q|
+      price = price_q[0]
+      quantity = price_q[1]
+      merchant_id = price_q[2]
+      merchants_revenue[merchant_id] += (price * quantity)
+    end
+    sorted_merchants = merchants_revenue.sort_by do |merchant|
+      merchant[1]
+    end.reverse
+    
+    sorted_merchants[0..merchant_count-1].map do |merchant|
+      find_by(:id, merchant[0])
+    end
+    
+    
+    
   end
 
   def most_items(merchant_count)
