@@ -79,30 +79,41 @@ class CustomerRepositoryTest < MiniTest::Test
   def test_a_customer_can_bring_up_invoices
     
     engine = mock_se_with_fixture_data
-    invoices = engine.customer_repository.find_by(:id,6).invoices
+    invoices = engine.customer_repository.find_by(:id, 1).invoices
     
-    assert_equal 34, invoices.size
+    assert_equal 8, invoices.size
   end
   def test_a_customer_can_bring_up_the_right_invoices
     
     engine = mock_se_with_fixture_data
-    invoices = engine.customer_repository.find_by(:id,6).invoices
+    invoices = engine.customer_repository.find_by(:id,1).invoices
     assert invoices[0]
-    assert_equal 34, invoices[0].id
+    assert_equal 1, invoices[0].id
   end
   def test_a_customer_can_bring_up_transactions
     
     engine = mock_se_with_fixture_data
-    transactions = engine.customer_repository.find_by(:id,6).transactions
+    transactions = engine.customer_repository.find_by(:id,1).transactions
     
-    assert_equal 34, transactions
+    assert_equal 7, transactions.size
   end
   def test_a_customer_can_bring_up_the_right_transaction
     
     engine = mock_se_with_fixture_data
-    transactions = engine.customer_repository.find_by(:id,6).transactions
+    transactions = engine.customer_repository.find_by(:id,1).transactions
     assert transactions[0]
-    assert_equal 34, transactions[0].id
+    assert_equal 1, transactions[0].id
   end
+  
+  def test_a_customer_can_have_a_favorite_merchant
+    
+    engine = mock_se_with_fixture_data
+    fav_merchant = engine.customer_repository.find_by(:id, 1).favorite_merchant
+    
+    assert fav_merchant
+    assert_kind_of Merchant, fav_merchant
+    assert_equal 34, fav_merchant.id
+  end
+  
   
 end

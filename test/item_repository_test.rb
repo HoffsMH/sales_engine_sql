@@ -117,6 +117,27 @@ class ItemTest < MiniTest::Test
     9,Item Quo Magnam,Culpa deleniti adipisci voluptates aut. Sed eum quisquam nisi. Voluptatem est rerum est qui id reprehenderit. Molestiae laudantium non velit alias. Ipsa consequatur modi quibusdam.,22582,1,2012-03-27 14:53:59 UTC,2012-03-27 14:53:59 UTC"
     
   end
+  def test_repository_most_items_returns_the_right_amount_of_merchants
+    engine = mock_se_with_fixture_data
+    merchants = engine.item_repository.most_items(3)
+    assert merchants
+    assert_kind_of Merchant, merchants[0]
+    assert_equal 3, merchants.size
+  end
+  def test_repository_most_items_returns_the_right_items
+    engine = mock_se_with_fixture_data
+    merchants = engine.item_repository.most_items(3)
+    assert merchants
+    assert_kind_of Merchant, merchants[0]
+    assert_equal 3, merchants.size
+    assert_equal 23, merchants[0].id
+  end
+  def test_repository_most_revenue_returns_the_right_item
+    engine = mock_se_with_fixture_data
+    items = engine.item_repository.most_revenue(1)
+  
+    assert_equal 3, items[1]
+  end
   
   def test_repository_most_revenue_returns_the_right_amount_of_items
     engine = mock_se_with_fixture_data
@@ -129,5 +150,11 @@ class ItemTest < MiniTest::Test
     items = engine.item_repository.most_revenue(1)
   
     assert_equal 3, items[1]
+  end
+  def test_an_item_knows_its_best_day
+    engine = mock_se_with_fixture_data
+    best_day = engine.item_repository.find_by(:id, 1).best_day
+    
+    assert_equal 1, best_day
   end
 end
