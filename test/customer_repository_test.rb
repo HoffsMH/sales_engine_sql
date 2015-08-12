@@ -112,7 +112,7 @@ class CustomerRepositoryTest < MiniTest::Test
     
     assert fav_merchant
     assert_kind_of Merchant, fav_merchant
-    assert_equal 34, fav_merchant.id
+    assert_equal 38, fav_merchant.id
   end
   
   

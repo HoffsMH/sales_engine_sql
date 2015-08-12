@@ -102,24 +102,4 @@ class MerchantRepository < Repository
     end
     total * 0.01
   end
-  def ranked_merchants(merchant_list)
-    merchant_list.sort_by{|merchant, quantity| quantity}.reverse
-  end
-
-  def top_merchants(count, merchants)
-    merchants[0..count - 1].map{|merchant_rank| find_by_id(merchant_rank.first)}
-  end
-
-  def revenue_list
-    invoice_items = se.invoice_item_repository
-    item_revenues = invoice_items.item_data_by_invoice(:simple_revenue)
-    data_by_merchant(item_revenues)
-  end
-
-  def quantity_sold_list
-    invoice_items = se.invoice_item_repository
-    item_quantities = invoice_items.item_data_by_invoice(:quantity)
-    data_by_merchant(item_quantities)
-  end
-
 end
