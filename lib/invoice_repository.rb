@@ -35,21 +35,19 @@ class InvoiceRepository < Repository
                   status, created_at, updated_at]
     
     new_invoice = se.db.execute("insert into invoices 
-                        (customer_id, 
-                         merchant_id, 
-                         status, 
-                         created_at, 
-                         updated_at) 
-                       values 
+                        (customer_id,
+                         merchant_id,
+                         status,
+                         created_at,
+                         updated_at)
+                       values
                           (#{customer_id},
-                            #{merchant_id}, 
-                           '#{status}', 
-                           '#{created_at}', 
+                            #{merchant_id},
+                           '#{status}',
+                           '#{created_at}',
                            '#{updated_at}')")
-
-    # se.invoice_item_repository.add_invoice_items(items, new_id)
-    
     new_id = se.db.execute("select id from invoices order by id desc limit 1").flatten.first
+    se.invoice_item_repository.add_invoice_items(items, new_id)
     find_by_id(new_id)
   end
 

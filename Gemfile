@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-gem 'simplcov'
+gem 'simplecov'
 gem 'pry'
 gem 'cane'
 gem 'reek'

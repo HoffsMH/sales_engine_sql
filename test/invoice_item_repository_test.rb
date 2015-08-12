@@ -41,7 +41,7 @@ class InvoiceItemRepositoryTest < MiniTest::Test
     10,1830,2,4,1859,2012-03-27 14:54:09 UTC,2012-03-27 14:54:09 UTC"
     
     engine = se_with_invoice_items(invoice_item_string)
-    invoice_item = engine.invoice_item_repository.find_by_unit_price(79140)
+    invoice_item = engine.invoice_item_repository.find_by_unit_price(791.40)
 
     
     assert_equal 5, invoice_item.id
@@ -67,9 +67,22 @@ class InvoiceItemRepositoryTest < MiniTest::Test
   def test_we_can_make_new_invoice_items
     engine = mock_se_with_fixture_data
     items = (1..3).map {engine.item_repository.random}
-    invoice_id = 989
+    invoice_id = 9899999
     
     engine.invoice_item_repository.add_invoice_items(items, invoice_id)
+    
+    assert_equal 3 ,engine.invoice_item_repository.find_all_by(:invoice_id, 9899999).size
+    
+    
+  end
+  def test_new_items_are_returned
+    engine = mock_se_with_fixture_data
+    items = (1..3).map {engine.item_repository.random}
+    invoice_id = 9899999
+    
+    result = engine.invoice_item_repository.add_invoice_items(items, invoice_id)
+    
+    assert_equal 4, result.size
     
   end
   

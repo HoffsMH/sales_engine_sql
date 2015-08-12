@@ -58,12 +58,10 @@ class InvoiceItemRepository < Repository
     items_by_id = items.group_by {|item| item.id}
     item_counts = items_by_id.map{|id, items| [id, items.count]}
 
-    item_counts.each do |item_id, quantity|
-      new_id = table.last.id + 1
+    item_counts.map do |item_id, quantity|
       unit_price = se.item_repository.find_by(:id, item_id).unit_price
       created_at = Time.now.utc.to_s
       updated_at = created_at
-
       new_invoice_item = se.db.execute("insert into invoice_items 
                           (item_id,
                            invoice_id,
@@ -79,6 +77,7 @@ class InvoiceItemRepository < Repository
                              '#{created_at}',
                              '#{updated_at}')")
       new_id = se.db.execute("select id from invoice_items order by id desc limit 1").flatten.first 
+      find_by(:id, new_id)
     end
   end
 
