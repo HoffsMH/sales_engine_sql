@@ -11,3 +11,8 @@ def mock_se_with_fixture_data
   engine.startup
   engine
 end
+def mock_se_with_real_data
+  engine = SalesEngine.new('../sales_engine/data')
+  engine.startup
+  engine
+end

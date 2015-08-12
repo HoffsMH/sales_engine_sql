@@ -110,7 +110,7 @@ class InvoiceRepositoryTest < MiniTest::Test
     items = (1..3).map {engine.item_repository.random}
     invoice = engine.invoice_repository.create(customer: customer, merchant: merchant, items: items)
     
-    assert_equal 31, invoice.id
+    assert_equal 30, invoice.id
   end
   
   def test_we_can_bring_up_invoice_items
@@ -120,7 +120,7 @@ class InvoiceRepositoryTest < MiniTest::Test
     
     assert invoice_items[0]
     assert_kind_of InvoiceItem, invoice_items[0]
-    assert_equal 31, invoice_items.size
+    assert_equal 8, invoice_items.size
   end
   def test_we_can_bring_up_the_right_invoice_items
     
@@ -129,7 +129,7 @@ class InvoiceRepositoryTest < MiniTest::Test
     
     assert invoice_items[0]
     assert_kind_of InvoiceItem, invoice_items[0]
-    assert_equal 31, invoice_items[0].id
+    assert_equal 13, invoice_items[0].id
   end
   def test_we_can_bring_up_items
     
@@ -138,7 +138,7 @@ class InvoiceRepositoryTest < MiniTest::Test
     
     assert invoice_items[0]
     assert_kind_of Item, invoice_items[0]
-    assert_equal 31, invoice_items.size
+    assert_equal 3, invoice_items.size
   end
   def test_we_can_bring_up_the_right_items
     
@@ -147,7 +147,7 @@ class InvoiceRepositoryTest < MiniTest::Test
     
     assert items[0]
     assert_kind_of Item, items[0]
-    assert_equal 31, items[0].id
+    assert_equal 1921, items[0].id
   end
   def test_we_can_bring_up_the_right_merchant
     
@@ -156,7 +156,7 @@ class InvoiceRepositoryTest < MiniTest::Test
     
     assert merchant
     assert_kind_of Merchant, merchant
-    assert_equal 31, merchant.id
+    assert_equal 78, merchant.id
   end
   def test_we_can_bring_up_the_right_customer
     
@@ -165,14 +165,14 @@ class InvoiceRepositoryTest < MiniTest::Test
     
     assert customer
     assert_kind_of Customer, customer
-    assert_equal 31, customer.id
+    assert_equal 1, customer.id
   end
   def test_we_can_return_the_total_revenue_for_an_invoice
     engine = mock_se_with_fixture_data
     revenue = engine.invoice_repository.find_by(:id, 3).revenue
     
     assert revenue
-    assert_equal 340, revenue
+    assert_equal 0, revenue
   end
   def test_we_can_use_an_invoice_to_charge_a_transaction
     

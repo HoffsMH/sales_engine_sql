@@ -84,20 +84,20 @@ class InvoiceItemRepositoryTest < MiniTest::Test
     engine = mock_se_with_fixture_data
     invoice = engine.invoice_item_repository.find_by(:id, 4).invoice
     assert invoice
-    assert_equal 45, invoice.id
+    assert_equal 1, invoice.id
   end
   def test_an_invoice_item_knows_its_corresponding_item
     engine = mock_se_with_fixture_data
     item = engine.invoice_item_repository.find_by(:id, 4).item
     assert item
-    assert_equal 45, item.id
+    assert_equal 535, item.id
   end
   
   def test_simple_revenue_returns_only_simple_revenue
     engine = mock_se_with_fixture_data
     simple_revenue = engine.invoice_item_repository.find_by(:id, 4).simple_revenue
     
-    assert_equal 345, simple_revenue
+    assert_equal BigDecimal.new('0.6588E4'), simple_revenue
   end
   
   def test_invoice_item_returns_a_merchant
@@ -115,7 +115,7 @@ class InvoiceItemRepositoryTest < MiniTest::Test
     
     assert !merchant.nil?
     assert_kind_of Merchant, merchant
-    assert_equal 34, merchant.id
+    assert_equal 26, merchant.id
   end
   
 end
