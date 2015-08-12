@@ -25,34 +25,51 @@ class ItemRepository < Repository
   # id,name,description,unit_price,merchant_id,created_at,updated_at
 
   def most_revenue(item_count)
-
-    invoice_items = se.invoice_item_repository
-    revenue = invoice_items.item_data_by_invoice(:simple_revenue)
-    item_revenue_by_invoice = revenue
-    items_by_revenue = invoice_items.items_values(item_revenue_by_invoice)
-
-    items_by_revenue = items_by_revenue.sort_by do |item,revenue|
-      revenue
+    items = Hash.new(0)
+    item_revenues = db.execute("select 
+                  invoice_items.item_id,
+                  invoice_items.unit_price, 
+                  invoice_items.quantity,
+                   transactions.result 
+                from invoice_items 
+                left join transactions 
+                  on invoice_items.invoice_id = transactions.invoice_id 
+                where 
+                  transactions.result = 'success'")
+    
+    item_revenues.each do |item_revenue|
+      items[item_revenue[0]] += item_revenue[1] * item_revenue[2]
     end
-
-    items_by_revenue.reverse!
-    top_items = items_by_revenue[0..item_count-1].map do |item_id, revenue|
-      find_by_id(item_id)
+    sorted_items = items.sort_by do |item|
+      item[1]
+    end.reverse
+    top_item_ids = sorted_items[0..item_count-1]
+    top_item_ids.map do |top_item_id|
+      find_by_id(top_item_id[0])
     end
-    top_items
   end
 
   def most_items(item_count)
-    invoice_items = se.invoice_item_repository
-    item_quantity_by_invoice = invoice_items.item_data_by_invoice(:quantity)
-    items_by_quantity = invoice_items.items_values(item_quantity_by_invoice)
-
-    items_by_quantity = items_by_quantity.sort_by do |item,quantity|
-      quantity
+    items = Hash.new(0)
+    item_quantities = db.execute("select 
+                  invoice_items.item_id,
+                  invoice_items.unit_price, 
+                  invoice_items.quantity,
+                   transactions.result 
+                from invoice_items 
+                left join transactions 
+                  on invoice_items.invoice_id = transactions.invoice_id 
+                where 
+                  transactions.result = 'success'")
+    item_quantities.each do |item_revenue|
+      items[item_revenue[0]] += item_revenue[2]
     end
-    items_by_quantity.reverse!
-    top_items = items_by_quantity[0..item_count-1].map do |item_id, quantity|
-      find_by_id(item_id)
+    sorted_items = items.sort_by do |item|
+      item[1]
+    end.reverse
+    
+    sorted_items[0..item_count-1].map do |item|
+      find_by_id(item[0])
     end
   end
 

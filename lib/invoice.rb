@@ -17,10 +17,10 @@ class Invoice
 
   def transactions
     transaction_repository = invoice_repository.se.transaction_repository
-    transaction_repository.table.select do |transaction|
-      transaction.invoice_id == id
-    end
+    transaction_repository.find_all_by_invoice_id(id)
+    # invoice_repository.convert(engine.db.execute("select invoices.* from invoices inner join transactions  on invoices.id =  transactions.invoice_id where transactions.result = 'success'"))[0].revenue
   end
+
 
   def invoice_items
     invoice_item_repository = invoice_repository.se.invoice_item_repository
@@ -59,9 +59,7 @@ class Invoice
     elsif transaction.successful?
       true
     elsif !transaction.nil?
-      transactions = transaction_repository.all
-      next_index = transactions.index(transaction) + 1
-      transaction_repository.all[next_index..-1].any? do |transaction|
+      transaction_repository.all.any? do |transaction|
         transaction.invoice_id == id && transaction.successful?
       end
     end

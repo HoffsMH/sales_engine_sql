@@ -30,17 +30,25 @@ class InvoiceRepository < Repository
     created_at = Time.now.utc.to_s
     updated_at = created_at
     items = invoice_info[:items]
-    new_id = table.last.id + 1
-
-    new_record = [new_id, customer_id, merchant_id,
+    
+    new_record = [customer_id, merchant_id,
                   status, created_at, updated_at]
-    new_invoice = Invoice.new(new_record, self)
-    table.push(new_invoice)
-    @quick_lookup_table = populate_quick_lookup_table(table)
-
+    
+    new_invoice = se.db.execute("insert into invoices 
+                        (customer_id,
+                         merchant_id,
+                         status,
+                         created_at,
+                         updated_at)
+                       values
+                          (#{customer_id},
+                            #{merchant_id},
+                           '#{status}',
+                           '#{created_at}',
+                           '#{updated_at}')")
+    new_id = se.db.execute("select id from invoices order by id desc limit 1").flatten.first
     se.invoice_item_repository.add_invoice_items(items, new_id)
-
-    new_invoice
+    find_by_id(new_id)
   end
 
 end

@@ -8,7 +8,6 @@ class Repository
   
   def initialize(sales_engine, records, db)
     @se = sales_engine
-    @table = []
     @db = db
     make_table
     fill_table(records)
@@ -20,7 +19,7 @@ class Repository
   
   def convert(result)
     result.map do |record|
-       self.child_class.new(record, self)
+      self.child_class.new(record, self)
     end
   end
   
@@ -30,14 +29,17 @@ class Repository
   end
   
   def random
-      result =  db.execute("select * from #{self.table_name} order by random() limit 1")
-      convert(result)[0]
+    result =  db.execute("select * from #{self.table_name} order by random() limit 1")
+    convert(result)[0]
   end
   
   def find_by(symbol, hunt)
     result = db.execute("select  * from #{self.table_name} where #{symbol.to_s} = \'#{hunt}\' LIMIT 1")
-    result[0]
-    self.child_class.new(result[0], self)
+    if !result.first.nil?
+      self.child_class.new(result[0], self)
+    else
+      nil
+    end
   end
   
   def find_all_by(symbol, hunt)
@@ -56,7 +58,7 @@ class Repository
     args = {:headers => true,
       :header_converters => :symbol,
       :converters => :all}
-      
+      db.transaction
       CSV.parse(data, args) do |row|
         formatted_row =  row.fields
         
@@ -67,10 +69,11 @@ class Repository
         
         db.execute "insert into #{self.table_name} values (#{value_string.join(",")})" , formatted_row
       end
+      db.commit
     end
-  
-  def inspect
-    self.class
+    
+    def inspect
+      self.class
+    end
+    
   end
-  
-end
