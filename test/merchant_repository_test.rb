@@ -52,8 +52,68 @@ class MerchantRepositoryTest < MiniTest::Test
     top_merchants = engine.merchant_repository.most_revenue(3)
 
     assert_equal 3, top_merchants.size
-    assert_equal "someName", top_merchants.first.name
+    assert_equal "Balistreri, Schaefer and Kshlerin", top_merchants.first.name
 
+  end
+  def test_it_can_return_customers_with_pending_invoices
+    
+    engine = mock_se_with_fixture_data
+    pending_merchants = engine.merchant_repository.find_by(:id , 1).customers_with_pending_invoices
+
+    assert_equal 2, pending_merchants.size
+  end
+  def test_most_items_it_can_return_the_right_amount_of_merchants
+    
+    engine = mock_se_with_fixture_data
+    merchants = engine.merchant_repository.most_items(2)
+    assert_kindof Merchant, merchants[0]
+    assert_equal 2, merchants.size
+  end
+  def test_most_items_it_can_return_the_right_amount_of_merchants
+    
+    engine = mock_se_with_fixture_data
+    merchants = engine.merchant_repository.most_items(1)
+
+    assert_equal "hi", merchants[0].name
+  end
+  
+  def test_a_merchant_can_find_its_items
+    
+    engine = mock_se_with_fixture_data
+    items = engine.merchant_repository.find_by(:id , 1).items
+
+    assert_equal 15, items.size
+  end
+  
+  def test_a_merchant_knows_its_revenue_with_no_date
+    engine = mock_se_with_fixture_data
+    revenue = engine.merchant_repository.find_by(:id , 26).revenue
+
+    assert_equal 26356.9, revenue
+    
+  end
+  def test_a_merchant_knows_its_revenue_with_a_date
+    engine = mock_se_with_fixture_data
+    revenue = engine.merchant_repository.find_by(:id , 26).revenue("2012-03-25")
+
+    assert_equal 2106777, revenue
+    
+  end
+  
+  def test_a_merchant_knows_his_favorite_color
+    engine = mock_se_with_fixture_data
+    fav_customer = engine.merchant_repository.find_by(:id , 26).favorite_customer
+
+    assert_equal "Joey", fav_customer.first_name
+    
+  end
+  
+  def test_it_has_a_simple_inspect_representation
+    engine = mock_se_with_fixture_data
+    merchant = engine.merchant_repository.find_by(:id , 26)
+
+    assert_equal "Merchant", merchant.inspect
+    
   end
   
 end

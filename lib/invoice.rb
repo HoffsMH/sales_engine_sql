@@ -67,7 +67,29 @@ class Invoice
   end
 
   def charge(info)
-    invoice_repository.se.transaction_repository.add_transaction(id, info)
+    invoice_id = id
+    credit_card_number = info[:credit_card_number]
+    credit_card_expiration_date = info[:credit_card_expiration_date]
+    result = info[:result]
+    created_at = Time.now.utc.to_s
+    updated_at = created_at
+
+    new_transaction = invoice_repository.se.db.execute("insert into transactions 
+                        (invoice_id,
+                         credit_card_number,
+                         credit_card_expiration_date,
+                         result,
+                         created_at,
+                         updated_at)
+                       values
+                          (#{invoice_id},
+                            #{credit_card_number},
+                           '#{credit_card_expiration_date}',
+                           '#{result}',
+                           '#{created_at}',
+                           '#{updated_at}')")
+    new_id = invoice_repository.se.db.execute("select id from transactions order by id desc limit 1").flatten.first
+    invoice_repository.se.transaction_repository.find_by_id(new_id)
   end
 
 end

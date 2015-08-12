@@ -18,33 +18,38 @@ class Customer
     @customer_repository.se.invoice_repository.convert(result)
   end
 
-  def transactions
-    transactions = invoices.map do |invoice|
-      invoice.invoice_repository.find_all_by(:invoice_id, invoice.id)
-    end
-    transactions
-  end
 
-    def transactions
-      customer_transactions =  []
-      invoices.each do |invoice|
-        transaction_repository = @customer_repository.se.transaction_repository
-        transaction = transaction_repository.find_all_by_invoice_id(invoice.id)
-        customer_transactions << transaction
-      end
-      customer_transactions.flatten
-    end
+  def transactions
+    query = "select 
+                * 
+            from transactions 
+            join invoices on
+              transactions.invoice_id = invoices.id
+             where invoices.customer_id = #{id}"
+    result = @customer_repository.db.execute(query)
+    customer_repository.se.transaction_repository.convert(result)
+  end
     def favorite_merchant
       merchants = Hash.new(0)
-      invoices.each do |invoice|
-        if invoice.successful?
-          merchant_repository = customer_repository.se.merchant_repository
-          merchant = merchant_repository.find_by(:id, invoice.merchant_id)
-          merchants[merchant] += 1
-        end
+      query = "select
+                  invoices.merchant_id
+              from invoices
+              join transactions on
+                transactions.invoice_id = invoices.id
+              where
+                transactions.result = 'success'
+              and
+                invoices.customer_id = #{id}"
+      info = customer_repository.db.execute(query)
+      info.each do |merchant_id|
+        merchants[merchant_id] += 1
       end
-      return nil if merchants.empty?
-      merchants.sort_by{|merchant, count| count}.reverse[0][0]
+      sorted_merchants = merchants.sort_by do |merchant_id, quantity|
+        quantity
+      end.reverse
+      
+      merchant_id = sorted_merchants.first.first.first
+      customer_repository.se.merchant_repository.find_by(:id, merchant_id)
     end
 
   end
