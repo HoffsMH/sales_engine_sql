@@ -16,15 +16,14 @@ class Invoice
   end
 
   def transactions
-    transaction_repository = invoice_repository.se.transaction_repository
-    transaction_repository.find_all_by_invoice_id(id)
-    # invoice_repository.convert(engine.db.execute("select invoices.* from invoices inner join transactions  on invoices.id =  transactions.invoice_id where transactions.result = 'success'"))[0].revenue
+    result = invoice_repository.db.execute("select *  from transactions where invoice_id = #{id}")
+    invoice_repository.se.transaction_repository.convert(result)
   end
 
 
   def invoice_items
-    invoice_item_repository = invoice_repository.se.invoice_item_repository
-    invoice_item_repository.find_all_by_invoice_id(id)
+    result = invoice_repository.db.execute("select *  from invoice_items where invoice_id = #{id}")
+    invoice_repository.se.invoice_item_repository.convert(result)
   end
 
   def items

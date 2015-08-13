@@ -19,8 +19,4 @@ class CustomerRepository < Repository
     );
     SQL
   end
-  
-  
-  # create table test_table1 (id INTEGER PRIMARY KEY AUTOINCREMENT, first_name VARCHAR(31), last_name VARCHAR(31), created_at date, updated_at date);
-  #   
   end

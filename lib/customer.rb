@@ -29,27 +29,27 @@ class Customer
     result = @customer_repository.db.execute(query)
     customer_repository.se.transaction_repository.convert(result)
   end
-    def favorite_merchant
-      merchants = Hash.new(0)
-      query = "select
-                  invoices.merchant_id
-              from invoices
-              join transactions on
-                transactions.invoice_id = invoices.id
-              where
-                transactions.result = 'success'
-              and
-                invoices.customer_id = #{id}"
-      info = customer_repository.db.execute(query)
-      info.each do |merchant_id|
-        merchants[merchant_id] += 1
-      end
-      sorted_merchants = merchants.sort_by do |merchant_id, quantity|
-        quantity
-      end.reverse
-      
-      merchant_id = sorted_merchants.first.first.first
-      customer_repository.se.merchant_repository.find_by(:id, merchant_id)
+  def favorite_merchant
+    merchants = Hash.new(0)
+    query = "select
+                invoices.merchant_id
+            from invoices
+            join transactions on
+              transactions.invoice_id = invoices.id
+            where
+              transactions.result = 'success'
+            and
+              invoices.customer_id = #{id}"
+    info = customer_repository.db.execute(query)
+    info.each do |merchant_id|
+      merchants[merchant_id] += 1
     end
-
+    sorted_merchants = merchants.sort_by do |merchant_id, quantity|
+      quantity
+    end.reverse
+    
+    merchant_id = sorted_merchants.first.first.first
+    customer_repository.se.merchant_repository.find_by(:id, merchant_id)
   end
+
+end
