@@ -16,3 +16,8 @@ def mock_se_with_real_data
   engine.startup
   engine
 end
+
+def real_engine 
+  engine ||= mock_se_with_real_data
+  engine
+end
