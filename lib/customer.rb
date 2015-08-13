@@ -48,7 +48,7 @@ class Customer
       quantity
     end.reverse
     
-    merchant_id = sorted_merchants.first.first.first
+    merchant_id = sorted_merchants.flatten.first
     customer_repository.se.merchant_repository.find_by(:id, merchant_id)
   end
 

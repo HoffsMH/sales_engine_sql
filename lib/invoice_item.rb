@@ -24,10 +24,6 @@ class InvoiceItem
     invoice_item_repository.se.item_repository.find_by(:id, item_id)
   end
 
-  def revenue
-    if successful? then BigDecimal.new(quantity) * unit_price else 0 end
-  end
-
   def simple_revenue
     quantity * unit_price
   end
@@ -36,12 +32,4 @@ class InvoiceItem
     merchant_id = invoice.merchant_id
     invoice_item_repository.se.merchant_repository.find_by(:id, merchant_id)
   end
-
-  def successful?
-    invoice_repository = invoice_item_repository.se.invoice_repository
-    invoice = invoice_repository.find_by(:id, invoice_id)
-
-    invoice && invoice.successful?
-  end
-
 end
