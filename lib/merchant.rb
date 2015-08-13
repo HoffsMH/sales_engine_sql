@@ -99,7 +99,7 @@ class Merchant
       merchant_repository.se.customer_repository.find_by_id(sorted_counts[0][0])
     end
     
-    def customers_with_pending_invoices
+    def customers_with_pending_invoices     
       pending_invoices = invoices.select do |invoice|
         !invoice.successful?
       end

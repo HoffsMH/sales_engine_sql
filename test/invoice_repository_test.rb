@@ -184,4 +184,13 @@ class InvoiceRepositoryTest < MiniTest::Test
     
     assert_equal "10/14", expiration_date
   end
+  
+  def test_we_can_find_an_invoices_transactions
+    
+    transactions = real_engine.invoice_repository.find_by(:id, 6).transactions
+    
+    assert transactions
+    assert_kind_of Transaction, transactions[0]
+    assert_equal 5 , transactions[0].id
+  end
 end

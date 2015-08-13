@@ -16,15 +16,14 @@ class Invoice
   end
 
   def transactions
-    transaction_repository = invoice_repository.se.transaction_repository
-    transaction_repository.find_all_by_invoice_id(id)
-    # invoice_repository.convert(engine.db.execute("select invoices.* from invoices inner join transactions  on invoices.id =  transactions.invoice_id where transactions.result = 'success'"))[0].revenue
+    result = invoice_repository.db.execute("select *  from transactions where invoice_id = #{id}")
+    invoice_repository.se.transaction_repository.convert(result)
   end
 
 
   def invoice_items
-    invoice_item_repository = invoice_repository.se.invoice_item_repository
-    invoice_item_repository.find_all_by_invoice_id(id)
+    result = invoice_repository.db.execute("select *  from invoice_items where invoice_id = #{id}")
+    invoice_repository.se.invoice_item_repository.convert(result)
   end
 
   def items
@@ -42,28 +41,37 @@ class Invoice
   end
 
   def revenue
-    invoice_item_repository = invoice_repository.se.invoice_item_repository
-    invoice_items = invoice_item_repository.find_all_by(:invoice_id, id)
-    # start_num = BigDecimal.new(0)
-    total = invoice_items.reduce(0) do |sum, invoice_item|
-      sum + invoice_item.revenue
+    total_revenue = 0
+    query = "select
+                invoice_items.unit_price,
+                invoice_items.quantity
+              from invoice_items 
+                join transactions on
+                  invoice_items.invoice_id = transactions.invoice_id
+              where 
+                invoice_items.invoice_id = #{id}
+              and
+                transactions.result = 'success'"
+    result = invoice_repository.db.execute(query)
+
+    result.reduce(0) do |sum, price, quantity|
+      sum + (price * quantity)
     end
   end
 
   def successful?
-    transaction_repository = invoice_repository.se.transaction_repository
-    transaction = transaction_repository.find_by(:invoice_id, id)
-
-    if transaction.nil?
-      false
-    elsif transaction.successful?
-      true
-    elsif !transaction.nil?
-      transaction_repository.all.any? do |transaction|
-        transaction.invoice_id == id && transaction.successful?
-      end
-    end
-
+    query = "select
+              *
+            from 
+              transactions
+            join invoices on
+              transactions.invoice_id = invoices.id
+            where
+              transactions.invoice_id = #{id}
+            and
+              transactions.result = 'success'"
+    result = invoice_repository.db.execute(query)
+    return true if result.size > 0 else false
   end
 
   def charge(info)
