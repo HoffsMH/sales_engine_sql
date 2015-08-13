@@ -22,6 +22,7 @@ class ItemTest < MiniTest::Test
     engine.merchant_repo_startup(merchants)
     engine
   end
+
   def test_it_can_find_by_id
     item_string  ="id,name,description,unit_price,merchant_id,created_at,updated_at
     1,Item Qui Esse,Nihil autem sit odio inventore deleniti. Est laudantium ratione distinctio laborum. Minus voluptatem nesciunt assumenda dicta voluptatum porro.,75107,1,2012-03-27 14:53:59 UTC,2012-03-27 14:53:59 UTC
@@ -147,16 +148,15 @@ class ItemTest < MiniTest::Test
     assert_equal 3, items.size
   end
   def test_repository_most_revenue_returns_the_right_item
-    engine = mock_se_with_real_data
-    items = engine.item_repository.most_revenue(1)
+    items = real_engine.item_repository.most_revenue(1)
     #cant figure out how to plug this into either fixtures or
     #mock data works in pry and in spec harness
     assert_equal 227, items[0].id
   end
   def test_an_item_knows_its_best_day
-    engine = mock_se_with_fixture_data
-    best_day = engine.item_repository.find_by(:id, 3).best_day
     
-    assert_equal 1, best_day
+    best_day = real_engine.item_repository.find_by(:id, 3).best_day
+    
+    assert_equal "2012-03-10", best_day.strftime("%Y-%m-%d")
   end
 end

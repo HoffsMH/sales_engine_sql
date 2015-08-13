@@ -110,7 +110,7 @@ class InvoiceRepositoryTest < MiniTest::Test
     items = (1..3).map {engine.item_repository.random}
     invoice = engine.invoice_repository.create(customer: customer, merchant: merchant, items: items)
     
-    assert_equal 30, invoice.id
+    assert_equal 57, invoice.id
   end
   
   def test_we_can_bring_up_invoice_items
